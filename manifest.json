@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Wordle Leaderboard",
+  "version": "1.0.0",
+  "action": { "default_popup": "index.html" },
+  "content_scripts": [
+    {
+      "js": ["src/content.js"],
+      "matches": ["https://www.nytimes.com/games/wordle/*"]
+    }
+  ],
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "permissions": [
+    "webRequest",
+    "storage"
+  ],
+  "host_permissions": ["https://www.nytimes.com/svc/wordle/v2/*"]
+}
