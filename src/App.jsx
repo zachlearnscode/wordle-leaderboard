@@ -2,52 +2,101 @@ import { useState, useEffect } from 'react'
 import logo from './logo.svg'
 import './App.css'
 import MyChild from './Child'
+import { auth } from './firebase'
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { TextField } from '@mui/material'
+import { Button } from "@mui/material"
+import Grid from "@mui/material/Grid";
 
 function App() {
-  const [count, setCount] = useState(null)
-  useEffect(() => {
-    async function testFn() {
-      const response = await fetch('https://jsonplaceholder.typicode.com/posts/1')
-      const postData = await response.json();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [displayName, setDisplayName] = useState("");
 
-      setTimeout(() =>setCount(postData), 300)
+  const handleChange = ({ target }) => {
+    const { id: inputId, value } = target;
+
+    if (inputId === 'email') setEmail(value);
+    if (inputId === 'password') setPassword(value);
+    if (inputId === 'display_name') setDisplayName(value);
+  }
+
+  const handleSubmit = async (evt) => {
+    evt.preventDefault();
+
+    const createUser = async (auth, email, password) => {
+      const userCredential = (
+        await createUserWithEmailAndPassword(auth, email, password)
+      );
+
+      console.log(userCredential)
     }
 
-    testFn()
-  }, [])
+    await createUser(auth, email, password);
+  }
+
 
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          count is: {count?.title}
-        </p>
-        <p>
-          Edit <code>App.jsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
+      <h2>Create an account</h2>
+      <form
+        id="create_account"
+        onSubmit={handleSubmit}
+      >
+        <Grid
+          container
+          spacing={1.5}
+        >
+          <Grid
+            item
+            xs={12}
           >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
+            <TextField
+              id="email"
+              label="Email"
+              variant="outlined"
+              size="small"
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
           >
-            Vite Docs
-          </a>
-        </p>
-      </header>
-      <MyChild />
+            <TextField
+              id="password"
+              label="Password"
+              variant="outlined"
+              size="small"
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+          >
+            <TextField
+              id="display_name"
+              label="Display Name"
+              variant="outlined"
+              size="small"
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+          >
+            <Button
+              type="submit"
+              form="create_account"
+              variant="contained"
+            >
+              Create Account
+            </Button>
+          </Grid>
+        </Grid>
+      </form>
     </div>
   )
 }
