@@ -1,4 +1,8 @@
+import { auth } from "./firebase";
+import { onAuthStateChanged } from "firebase/auth";
+
 const localStorage = chrome.storage.local;
+const runtime = chrome.runtime;
 
 let puzzleRequestInProgress = false;
 chrome.webRequest.onCompleted.addListener(
@@ -30,11 +34,17 @@ chrome.webRequest.onCompleted.addListener(
   { urls: ["https://www.nytimes.com/svc/wordle/v2/*"] }
 );
 
-chrome.runtime.onMessage.addListener(
+runtime.onMessage.addListener(
   async (request, sender, sendReponse) => {
-    if (request.gameState) {
-      console.log(request.gameState) // TODO: send results to Firebase DB
-      sendReponse('received that shit.s')
+    // if (request.gameState) {
+    //   console.log(request.gameState) // TODO: send results to Firebase DB
+    //   sendReponse('received that shit.s')
+    // }
+
+    if (request === 'getUser') {
+      const user = await localStorage.get(["user"]);
+      unsubscribeFromAuthObserver = onAuthStateChanged(auth, authObserverCallback)
+      console.log(user)
     }
   }
 )
