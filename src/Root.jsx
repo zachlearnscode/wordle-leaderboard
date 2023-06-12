@@ -1,31 +1,38 @@
 import { useState, useEffect } from 'react'
-import './App.css'
+import './Root.css'
+import { Outlet, useNavigate } from "react-router-dom"
+import { Stack } from '@mui/system';
 import Welcome from './Welcome';
 import Home from './Home';
 import CircularProgress from '@mui/material/CircularProgress';
 import { auth } from "./firebase"
 import { onAuthStateChanged } from 'firebase/auth';
 
-function App() {
-  const [loading, setLoading] = useState(true);
+function Root() {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
-  onAuthStateChanged(auth, (user) => {
-    setUser(user);
-    setLoading(false);
-  });
+  onAuthStateChanged(auth, setUser)
+  useEffect(() => {
+    if (user) navigate("/home");
+    else navigate("/signin");
+  }, [user]);
   
   return (
-    <div className="App">
-      {
+    <Stack className="Root">
+      <h1>Wordle Leaderboard</h1>
+      <main className="Main">
+        <Outlet />
+      </main>
+      {/* {
         (() => {
           if (loading) return <CircularProgress />
           else if (user) return <Home user={user} />
           else return <Welcome />
         })()
-      }
-    </div>
+      } */}
+    </Stack>
   )
 }
 
-export default App
+export default Root
