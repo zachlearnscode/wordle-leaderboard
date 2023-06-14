@@ -4,6 +4,7 @@ import { Outlet, useNavigate } from "react-router-dom"
 import { Stack } from '@mui/system';
 import { auth } from "./firebase"
 import { onAuthStateChanged } from 'firebase/auth';
+import MenuBar from './MenuBar';
 
 function Root() {
   const [authorized, setAuthorized] = useState(false);
@@ -24,12 +25,15 @@ function Root() {
   }, [ authorized ]);
   
   return (
-    <Stack className="Root">
-      <h1>Wordle Leaderboard</h1>
-      <main className="Main">
-        <Outlet />
-      </main>
-    </Stack>
+    <>
+      <MenuBar />
+      <Stack className="Root">
+        
+        <main className="Main">
+          <Outlet />
+        </main>
+      </Stack>
+    </>
   )
 }
 

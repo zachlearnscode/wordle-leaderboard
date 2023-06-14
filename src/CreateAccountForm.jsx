@@ -23,7 +23,7 @@ export default function CreateAccountForm() {
 
     try {
       const { user } = await createUser(auth, email, password);
-      await setDoc(doc(db, "users", user.uid), { email: user.email });
+      await setDoc(doc(db, "users", user.uid), { email: user.email, leaderboards: [], id: user.id });
     } catch (err) { console.log(err) }
   }
 
