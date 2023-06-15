@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { signInWithEmailAndPassword as signIn } from "firebase/auth";
 import { TextField, Button, Link } from '@mui/material'
-import Grid from "@mui/material/Grid";
+import { Link as RouterLink } from 'react-router-dom';
 import { auth } from './firebase'
 
 export default function SignInForm() {
@@ -28,63 +28,49 @@ export default function SignInForm() {
   }
 
   return (
-    <div>
+    <form
+      id="sign_in"
+      onSubmit={handleSubmit}
+    >
       <h2>Sign in to your account</h2>
-      <form
-        id="sign_in"
-        onSubmit={handleSubmit}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.75rem'
+        }}
       >
-        <Grid
-          container
-          spacing={1.5}
+        <TextField
+          id="email"
+          label="Email"
+          variant="outlined"
+          size="small"
+          fullWidth
+          onChange={handleChange}
+        />
+        <TextField
+          id="password"
+          type="password"
+          label="Password"
+          variant="outlined"
+          size="small"
+          fullWidth
+          onChange={handleChange}
+        />
+        <Button
+          type="submit"
+          form="sign_in"
+          variant="contained"
         >
-          <Grid
-            item
-            xs={12}
-          >
-            <TextField
-              id="email"
-              label="Email"
-              variant="outlined"
-              size="small"
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-          >
-            <TextField
-              id="password"
-              type="password"
-              label="Password"
-              variant="outlined"
-              size="small"
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-          >
-            <Button
-              type="submit"
-              form="sign_in"
-              variant="contained"
-            >
-              Sign In
-            </Button>
-          </Grid>
-          <Grid
-            item
-            xs={12}
-          >
-            <Link>
-              Create Account
-            </Link>
-          </Grid>
-        </Grid>
-      </form>
-    </div>
+          Sign In
+        </Button>
+        <Link
+          component={RouterLink}
+          to="/signup"
+        >
+          Create an Account
+        </Link>
+      </div>
+    </form>
   )
 }

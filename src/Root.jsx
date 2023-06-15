@@ -25,15 +25,12 @@ function Root() {
   }, [ authorized ]);
   
   return (
-    <>
-      <MenuBar />
-      <Stack className="Root">
-        
-        <main className="Main">
-          <Outlet />
-        </main>
-      </Stack>
-    </>
+    <div className="Root">
+      <MenuBar />  
+      <main className="Main">
+        <Outlet />
+      </main>
+    </div>
   )
 }
 

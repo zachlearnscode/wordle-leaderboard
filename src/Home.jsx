@@ -14,6 +14,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import CreateLeaderboardForm from "./CreateLeaderboardForm";
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -48,7 +49,10 @@ export default function Home() {
         const leaderboardDocSnaps = await getDocs(q);
 
         const leaderboardsData = [];
-        leaderboardDocSnaps.forEach((doc) => leaderboardsData.push(doc.data()));
+        leaderboardDocSnaps
+          .forEach((doc) => (
+            leaderboardsData.push(doc.data()))
+          );
 
         setLeaderboards(leaderboardsData);
       }
@@ -82,7 +86,7 @@ export default function Home() {
 
   if (leaderboards.length) return <div>Leaderboard List</div>
   else return (
-    <div>
+    <div style={{fontSize: '1rem'}}>
       You haven't joined any leaderboards.
       <div style={{
         display: 'flex',
@@ -93,7 +97,37 @@ export default function Home() {
         <Button variant="outlined" size="small" onClick={() => setOpen(true)}>Create a leaderboard</Button>
         {/* <Button variant="outlined" size="small">Find a leaderboard</Button> */}
       </div>
-      <Dialog
+      {/* <form>
+          <Grid
+            container
+            spacing={1.5}
+          >
+            <Grid
+              item
+              xs={12}
+            >
+              <TextField
+                autoFocus
+                label="Leaderboard Name"
+                variant="outlined"
+                size="small"
+                fullWidth
+              />
+            </Grid>
+          </Grid>
+          <FormControl>
+            <FormLabel id="demo-radio-buttons-group-label">Leaderboard Visibility</FormLabel>
+            <RadioGroup
+              aria-labelledby="demo-radio-buttons-group-label"
+              defaultValue={isPublic}
+              name="radio-buttons-group"
+            >
+              <FormControlLabel value={false} control={<Radio />} label="Private" />
+              <FormControlLabel value={true} control={<Radio />} label="Public" />
+            </RadioGroup>
+          </FormControl>
+        </form> */}
+      {/* <Dialog
         fullScreen
         open={open}
         onClose={() => setOpen(false)}
@@ -141,7 +175,7 @@ export default function Home() {
             Create
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
     </div>
   )
 }

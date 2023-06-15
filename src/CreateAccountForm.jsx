@@ -28,67 +28,51 @@ export default function CreateAccountForm() {
   }
 
   return (
-    <div>
+    <form
+      id="create_account"
+      onSubmit={handleSubmit}
+    >
       <h2>Create an account</h2>
-      <form
-        id="create_account"
-        onSubmit={handleSubmit}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.75rem'
+        }}
       >
-        <Grid
-          container
-          spacing={1.5}
+        <TextField
+          id="email"
+          label="Email"
+          variant="outlined"
+          size="small"
+          fullWidth
+          onChange={handleChange}
+        />
+        <TextField
+          id="password"
+          type="password"
+          label="Password"
+          variant="outlined"
+          size="small"
+          fullWidth
+          onChange={handleChange}
+        />
+        <TextField
+          id="display_name"
+          label="Display Name"
+          variant="outlined"
+          size="small"
+          fullWidth
+          onChange={handleChange}
+        />
+        <Button
+          type="submit"
+          form="create_account"
+          variant="contained"
         >
-          <Grid
-            item
-            xs={12}
-          >
-            <TextField
-              id="email"
-              label="Email"
-              variant="outlined"
-              size="small"
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-          >
-            <TextField
-              id="password"
-              type="password"
-              label="Password"
-              variant="outlined"
-              size="small"
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-          >
-            <TextField
-              id="display_name"
-              label="Display Name"
-              variant="outlined"
-              size="small"
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-          >
-            <Button
-              type="submit"
-              form="create_account"
-              variant="contained"
-            >
-              Create Account
-            </Button>
-          </Grid>
-        </Grid>
-      </form>
-    </div>
+          Create Account
+        </Button>
+      </div>
+    </form>
   )
 }

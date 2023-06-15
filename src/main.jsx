@@ -7,6 +7,7 @@ import Home from './Home';
 import Root from './Root'
 import CircularProgress from '@mui/material/CircularProgress';
 import './index.css'
+import CreateAccountForm from './CreateAccountForm';
 
 const router = createMemoryRouter([
   {
@@ -15,6 +16,7 @@ const router = createMemoryRouter([
     children: [
       { index: true, element: <CircularProgress /> },
       { path: "signin", element: <SignInForm /> },
+      { path: "signup", element: <CreateAccountForm /> },
       { path: "home", element: <Home /> }
     ],
   },
