@@ -2,7 +2,7 @@
   height: 100%;
 }
 
-.Main {
+main {
   box-sizing: border-box;
   height: calc(100% - 48px);
   display: flex;

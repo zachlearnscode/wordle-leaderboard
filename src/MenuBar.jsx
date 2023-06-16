@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { signOut } from "@firebase/auth";
 
+import { UserContext } from "./Root";
 import { auth } from "./firebase";
 
 import { AppBar, Toolbar, IconButton, Typography, Menu, MenuItem } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
 export default function MenuBar() {
+  const user = useContext(UserContext)
   const [anchorEl, setAnchorEl] = useState(null);
 
   const isMenuOpen = Boolean(anchorEl);
