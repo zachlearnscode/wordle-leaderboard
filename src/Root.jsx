@@ -32,7 +32,7 @@ function Root() {
     if (uid) {
       const userDocRef = doc(db, "users", uid);
       const unsubscribe = onSnapshot(userDocRef, (doc) => {
-        setUser(doc.data());
+        setUser({ ref: doc.ref, data: doc.data() });
         setInitializing(false);
       })
 

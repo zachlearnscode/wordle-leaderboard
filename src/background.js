@@ -1,34 +1,33 @@
 import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { query, collection, where, getDocs, setDoc, doc } from "firebase/firestore";
+import { db } from "./firebase"
 
 const localStorage = chrome.storage.local;
 const runtime = chrome.runtime;
 
-let puzzleRequestInProgress = false;
 chrome.webRequest.onCompleted.addListener(
   async ({ url }) => {
-    const receivedPuzzleDate = (() => {
+    const dateInUrl = (() => {
       const dateStart = url.lastIndexOf('/') + 1,
             dateEnd = url.lastIndexOf('.');
 
       return url.slice(dateStart, dateEnd);
     })();
 
-    const storedPuzzleDate = await localStorage.get(["date"]);
+    const puzzlesRef = collection(db, "puzzles");
+    const q = query(puzzlesRef, where("date", "==", dateInUrl));
 
-    if (storedPuzzleDate.date !== receivedPuzzleDate) {
-      if (puzzleRequestInProgress === false) {
-        try {
-          puzzleRequestInProgress = true;
+    const querySnapshot = await getDocs(q);
 
-          const response = await fetch(url);
-          const { id, print_date: date, solution } = await response.json();
+    if (querySnapshot.empty) {
+      try {
+        const response = await fetch(url);
+        const { id, solution, print_date: date, days_since_launch: puzzleNumber } = await response.json();
 
-          await localStorage.set({ id, date, solution });
-        }
-        catch (err) { console.log('There was an error fetching today\'s Wordle puzzle data', err); }
-        finally { puzzleRequestInProgress = false; }
+        await setDoc(doc(db, "puzzles", String(id)), { solution, date, puzzleNumber });
       }
+      catch (err) { console.log('There was an error fetching today\'s Wordle puzzle data', err); }
     }
   },
   { urls: ["https://www.nytimes.com/svc/wordle/v2/*"] }

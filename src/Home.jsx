@@ -1,38 +1,33 @@
 import { useState, useEffect, useContext } from "react";
 import { UserContext } from "./Root";
-import { doc, getDoc, setDoc, addDoc, updateDoc, onSnapshot, arrayUnion, collection as coll, query, where, getDocs, documentId as docId } from "firebase/firestore";
+import { doc, getDoc, addDoc, setDoc, updateDoc, collection as coll } from "firebase/firestore";
 import { db } from "./firebase";
 import { Button } from '@mui/material';
-import BasicTable from "./Leaderboard";
 import { Stack } from "@mui/system";
 import Leaderboard from "./Leaderboard";
+
+let date = new Date().toJSON();
+date = date.slice(0, date.indexOf('T'));
 
 export default function Home() {
   const user = useContext(UserContext);
   
   const handleCreateClick = async () => {
     try {
-      const leaderboardColl = coll(db, "leaderboards");
-      const leaderboardDocRef = doc(leaderboardColl);
       const leaderboardData = {
         nickname: 'My New Leaderboard',
-        participants: [ user.id ],
-        manager: user.id,
-        id: leaderboardDocRef.id
+        participants: [ user.ref ],
+        manager: user.data.id
       }
       
-      await setDoc(leaderboardDocRef, leaderboardData);
+      const leaderboardDocRef = await addDoc(coll(db, "leaderboards"), leaderboardData);
 
-      const userDocRef = doc(db, "users", user.id);
-      const newLeaderboardsData = {
-        ...user.leaderboards,
-        [leaderboardDocRef.id]: {
-          nickname: leaderboardData.nickname,
-          pinned: false
-        }
-      };
-
-      await updateDoc(userDocRef, { leaderboards: newLeaderboardsData });
+      await updateDoc(user.ref, {
+        leaderboards: [
+          ...user.data.leaderboards,
+          leaderboardDocRef
+        ]
+      });
     }
     catch (err) { console.log(err) }
   }
@@ -46,7 +41,7 @@ export default function Home() {
       style={{height: '100%', width: '100%'}}
     >
       {
-        Object.keys(user?.leaderboards).length ?
+        Object.keys(user?.data?.leaderboards).length ?
         <Stack
           direction="column"
           alignItems="center"
@@ -55,8 +50,14 @@ export default function Home() {
           style={{ width: '100%', overflow: 'auto'}}
         >
           {
-            Object.entries(user?.leaderboards)?.map(([id, meta]) => {
-            return <Leaderboard key={id} leaderboardId={id} meta={meta} />
+            Object.entries(user?.data?.leaderboards)?.map(([id, meta]) => {
+            return (
+              <Leaderboard
+                key={id}
+                leaderboardId={id}
+                meta={meta}
+                date={date}
+              />)
             })
           }
         </Stack> :

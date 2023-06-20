@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { doc, getDoc, collection } from "firebase/firestore";
+import { doc, getDoc, getDocs, collection, query, where } from "firebase/firestore";
 import { db } from './firebase';
 
 import Table from '@mui/material/Table';
@@ -37,21 +37,29 @@ const getPosition = (position) => {
   }
 }
 
-export default function Leaderboard({ leaderboardId, meta }) {
+export default function Leaderboard({ leaderboardId, meta, date }) {
   const [loading, setLoading] = useState(false);
   const [leaderboard, setLeaderboard] = useState(null);
-  const [ expanded, setExpanded ] = useState(meta.pinned);
+  const [contest, setContest] = useState(null);
+  const [expanded, setExpanded] = useState(meta.pinned);
 
   useEffect(() => {
     if (expanded) {
       const getLeaderboard = async () => {
         try {
           setLoading(true);
+          
+          const leaderboardDocRef = doc(db, `leaderboards/${leaderboardId}`);
+          const leaderboardDocSnap = await getDoc(leaderboardDocRef);
+          
+          if (leaderboardDocSnap.exists) {
+            setLeaderboard(leaderboardDocSnap.data());
 
-          const docRef = doc(db, "leaderboards", leaderboardId);
-          const docSnap = await getDoc(docRef);
+            const contestDocRef = doc(leaderboardDocSnap.ref, `contests/${date}`);
+            const contestDocSnap = await getDoc(contestDocRef);
 
-          setLeaderboard(docSnap.data());
+            if (contestDocSnap.exists) setContest(contestDocSnap.data());
+          }
         } finally { setLoading(false) }
       }
 
@@ -61,10 +69,36 @@ export default function Leaderboard({ leaderboardId, meta }) {
 
   const handleClick = () => setExpanded((prev) => !prev);
 
+  const rows = (() => {
+    const finished = contest?.standings || [];
+    const unfinished = leaderboard?.participants
+      .filter((userId) => !finished.map(({ id }) => id).includes(userId)) || [];
+
+      console.log([...finished, ...unfinished])
+    return [...finished, ...unfinished];
+
+  })();
+
   return (
-    <Paper variant="outlined" style={{width: '100%', padding: '0.5rem', boxSizing: 'border-box'}}>
-      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-        <Typography style={{fontWeight: 'bold'}}>{meta.nickname}</Typography>
+    <Paper
+      variant="outlined"
+      style={{
+        width: '100%',
+        padding: '0.5rem',
+        boxSizing: 'border-box'
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent:
+          'space-between'
+        }}
+      >
+        <Typography style={{fontWeight: 'bold'}}>
+          {meta.nickname}
+        </Typography>
         <IconButton
           aria-label={expanded ? 'Collapse leaderboard' : 'Expand leaderboard'}
           size='small'
@@ -75,9 +109,9 @@ export default function Leaderboard({ leaderboardId, meta }) {
       </div>
       <Collapse in={expanded}>
         {
-          loading ?
-            <CircularProgress /> :
-            <TableContainer component="div">
+          loading
+            ? <CircularProgress style={{margin: '1rem'}} />
+            : <TableContainer component="div">
               <Table size="small">
                 <TableHead>
                   <TableRow>
@@ -98,6 +132,12 @@ export default function Leaderboard({ leaderboardId, meta }) {
                     </TableRow>
                   ))}
                 </TableBody>
+                <TableFooter>
+                  <div style={{display: 'flex', gap: '0.25rem', text: 'lightgrey'}}>
+                    <span>Date:</span>
+                    <span>Solution:</span>
+                  </div>
+                </TableFooter>
               </Table>
             </TableContainer>
         }
